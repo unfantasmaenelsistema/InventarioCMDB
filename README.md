@@ -1,21 +1,21 @@
 <div align="center">
 
 <a href="https://www.unfantasmaenelsistema.com/" target="_blank" rel="noopener noreferrer">
-  <img src="./assets/aistudio/icono_81a3db5b.png" alt="Logo de Un Fantasma en el Sistema" width="110" />
+  <img src="./public/assets/logo.png" alt="Logo de Un Fantasma en el Sistema" width="110" />
 </a>
 
 # InventarioCMDB — Simulador SOC de Red, CMDB y Auditoría SBOM/CVE
 
-**Laboratorio educativo 100 % en el cliente (HTML5 + Tailwind CSS + D3.js v7 + Vanilla ES6 JS)** para practicar descubrimiento de activos, gestión de configuración (CMDB/CI Mapping), correlación de dependencias SBOM contra vulnerabilidades CVE/CVSS/KEV y retos prácticos CTF.
+**Laboratorio educativo 100 % en el cliente (HTML5 + Tailwind CSS + D3.js 7.9 + Vanilla ES6 JS)** para practicar descubrimiento de activos, gestión de configuración (CMDB/CI Mapping), correlación de dependencias SBOM contra vulnerabilidades CVE/CVSS/KEV y retos prácticos CTF.
 
 [![100% Client-Side](https://img.shields.io/badge/Arquitectura-100%25%20Client--Side-0EA5E9?style=flat-square)](#arquitectura-y-tecnolog%C3%ADas)
 [![Vanilla JS ES6](https://img.shields.io/badge/JavaScript-Vanilla%20ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=000)](#arquitectura-y-tecnolog%C3%ADas)
 [![D3.js v7](https://img.shields.io/badge/Visualizaci%C3%B3n-D3.js%20v7-F9A03C?style=flat-square&logo=d3.js&logoColor=fff)](#panel-principal-dashboard-soc-y-visualizaci%C3%B3n-d3js)
 [![CycloneDX 1.5](https://img.shields.io/badge/SBOM-CycloneDX%201.5-10B981?style=flat-square)](#exportaci%C3%B3n-profesional-y-portabilidad)
-[![GitHub Pages Ready](https://img.shields.io/badge/GitHub%20Pages-Listo%20para%20desplegar-22C55E?style=flat-square&logo=github)](#despliegue-en-github-pages)
+[![Probar en GitHub Pages](https://img.shields.io/badge/Probar-en%20el%20navegador-22C55E?style=flat-square&logo=github)](https://unfantasmaenelsistema.github.io/InventarioCMDB/)
 [![License: MIT](https://img.shields.io/badge/Licencia-MIT-slate?style=flat-square)](./LICENSE)
 
-Proyecto educativo creado por **[Un Fantasma en el Sistema](https://www.unfantasmaenelsistema.com/)**
+**[▶ Abrir el laboratorio](https://unfantasmaenelsistema.github.io/InventarioCMDB/)** · Proyecto educativo creado por **[Un Fantasma en el Sistema](https://www.unfantasmaenelsistema.com/)**
 
 </div>
 
@@ -23,22 +23,23 @@ Proyecto educativo creado por **[Un Fantasma en el Sistema](https://www.unfantas
 
 ## Tabla de Contenidos
 
-- [Descripción General](#-descripción-general)
-- [Capturas Reales de la Aplicación](#-capturas-reales-de-la-aplicación)
-- [Módulos y Capacidades](#-módulos-y-capacidades)
-- [Modos de Dificultad (Fácil vs. Difícil)](#-modos-de-dificultad-fácil-vs-difícil)
-- [Terminal Interactiva CLI](#-terminal-interactiva-cli)
-- [Retos CTF Educativos](#-retos-ctf-educativos)
-- [Exportación Profesional y Portabilidad](#-exportación-profesional-y-portabilidad)
-- [Arquitectura y Tecnologías](#-arquitectura-y-tecnologías)
-- [Despliegue en GitHub Pages](#-despliegue-en-github-pages)
-- [Uso en Local](#-uso-en-local)
+- [Descripción General](#descripción-general)
+- [Capturas Reales de la Aplicación](#capturas-reales-de-la-aplicación)
+- [Módulos y Capacidades](#módulos-y-capacidades)
+- [Modos de Dificultad (Fácil vs. Difícil)](#modos-de-dificultad-fácil-vs-difícil)
+- [Terminal Interactiva CLI](#terminal-interactiva-cli)
+- [Retos CTF Educativos](#retos-ctf-educativos)
+- [Exportación Profesional y Portabilidad](#exportación-profesional-y-portabilidad)
+- [Arquitectura y Tecnologías](#arquitectura-y-tecnologías)
+- [Despliegue en GitHub Pages](#despliegue-en-github-pages)
+- [Uso en Local](#uso-en-local)
+- [Novedades de la versión 2](#novedades-de-la-versión-2)
 
 ---
 
 ## Descripción General
 
-**InventarioCMDB** reproduce el flujo completo de trabajo de un **Centro de Operaciones de Seguridad (SOC)** y un equipo de **Gestión de Activos y Vulnerabilidades**, sin necesidad de servidores, contenedores ni backend: todo el laboratorio vive en un único archivo `index.html` listo para servir de forma estática en GitHub Pages o abrir directamente en navegador.
+**InventarioCMDB** reproduce el flujo completo de trabajo de un **Centro de Operaciones de Seguridad (SOC)** y un equipo de **Gestión de Activos y Vulnerabilidades**, sin necesidad de servidores, contenedores ni backend: todo el laboratorio vive en un único archivo `index.html` que se publica de forma estática en GitHub Pages.
 
 El alumno o profesional asume el rol de **analista SOC** y recorre cuatro fases reales:
 
@@ -50,6 +51,8 @@ El alumno o profesional asume el rol de **analista SOC** y recorre cuatro fases 
 ---
 
 ## Capturas Reales de la Aplicación
+
+> Capturas de la versión 2 tomadas sobre la compilación de producción, recorriendo el flujo real (escaneos, aprobaciones, cuarentena y auditoría).
 
 ### 1. Panel Principal (Dashboard SOC, Donut D3.js y Bitácora Audit Trail)
 Visualización de métricas globales en tiempo real, selector de escenario (**Fácil** vs. **Difícil**), gráfico circular interactivo con D3.js v7 (tooltip con porcentaje exacto e impacto de cada tipo de dispositivo en el riesgo global) y bitácora cronológica de eventos SOC.
@@ -90,6 +93,12 @@ Motor de correlación continua con indicador de **Nivel de Riesgo Global**, **gr
 Tres escenarios guiados con checklist dinámico sobre `cmdbState` y obtención de banderas (`FLAG{...}`) al completar los objetivos operativos en el Escáner, CMDB y SBOM/CVE.
 
 ![Retos CTF y Banderas Capturadas](./docs/screenshots/06-retos-ctf.png)
+
+---
+
+### 7. Versión móvil
+
+<img src="./docs/screenshots/07-movil.png" alt="InventarioCMDB en un móvil" width="300" />
 
 ---
 
@@ -153,9 +162,9 @@ clear                       # Limpia la salida de la terminal
 
 ## Exportación Profesional y Portabilidad
 
-- **Portabilidad de Laboratorio (Base64)**: Permite serializar el objeto completo `cmdbState` (activos, relaciones, SBOM, CVEs, triaje, historial de riesgo, bitácora y retos) a una cadena Base64 UTF-8 para guardar prácticas o distribuir escenarios personalizados entre profesorado y alumnado.
+- **Portabilidad de Laboratorio (Base64)**: Permite serializar `cmdbState` (activos, relaciones, SBOM, CVEs, triaje, historial de riesgo y bitácora) a una cadena Base64 UTF-8 para guardar prácticas o distribuir escenarios personalizados entre profesorado y alumnado. Al importar, los textos se muestran escapados, los identificadores solo admiten caracteres seguros y el progreso de los retos se vuelve a calcular sobre la red importada: no se puede «importar» una bandera.
 - **Exportar SBOM CycloneDX 1.5 (`.json`)**: Genera un documento JSON conforme a la especificación **CycloneDX 1.5** con `purl` (Package URL), licencias y vulnerabilidades asociadas (global o por CI individual).
-- **Exportar Inventario CMDB (`.csv`)**: Descarga el inventario consolidado con codificación UTF-8 BOM compatible con Microsoft Excel y LibreOffice Calc.
+- **Exportar Inventario CMDB (`.csv`)**: Descarga el inventario consolidado con codificación UTF-8 BOM compatible con Microsoft Excel y LibreOffice Calc. Las celdas que empiezan por `=`, `+`, `-` o `@` se neutralizan para que la hoja de cálculo no las ejecute como fórmulas.
 - **Exportar Informe de Auditoría (`.md`)**: Genera un reporte ejecutivo en Markdown con resumen de riesgo, hallazgos KEV/CVSS y tabla de activos.
 
 ---
@@ -163,45 +172,52 @@ clear                       # Limpia la salida de la terminal
 ## Arquitectura y Tecnologías
 
 - **Ejecución 100 % estática en cliente**: sin backend, sin dependencias de servidor ni claves API.
-- **Archivo principal unificado**: [`index.html`](./index.html) (HTML5 semántico + Tailwind CSS CDN + D3.js v7 CDN + Vanilla JS ES6 `'use strict'`).
-- **Seguridad incorporada**: sanitización de salidas dinámicas (`escapeHtml`) frente a XSS al editar fichas de CI o importar cadenas Base64 externas.
-- **Estructura preparada para GitHub y GitHub Pages**:
-  - `index.html` — Aplicación completa lista para servir directamente.
-  - `assets/aistudio/icono_81a3db5b.png` — Emblema estático servido en ruta relativa.
-  - `.nojekyll` — Evita el procesamiento Jekyll en GitHub Pages.
-  - `.github/workflows/deploy-pages.yml` — Workflow automático de GitHub Actions para GitHub Pages.
-  - `docs/screenshots/` — Capturas reales de la aplicación en funcionamiento.
+- **Archivo principal unificado**: [`index.html`](./index.html) (HTML5 semántico + Vanilla JS ES6 `'use strict'`), con **D3.js 7.9.0** desde CDN con versión fija.
+- **Tailwind CSS compilado** con Vite en el build (antes se cargaba desde el CDN de desarrollo, que avisa de no usarse en producción). El aspecto es el mismo: comparado píxel a píxel en siete vistas, en escritorio y en móvil.
+- **Seguridad incorporada**:
+  - los textos (nombres de host, IP, SO, paquetes, CVE, retos…) se escapan con `escapeHtml` al pintarlos, también los que llegan de una cadena Base64 o de `localStorage`;
+  - los identificadores que van dentro de `onclick` solo admiten `[A-Za-z0-9._:-]`;
+  - los retos importados no se aceptan como resueltos;
+  - el CSV se exporta sin fórmulas.
+- **Estructura del repositorio**:
+  - `index.html` — Aplicación completa.
+  - `src/styles.css`, `tailwind.config.js`, `postcss.config.js` y `vite.config.js` — Compilación de Tailwind.
+  - `public/assets/logo.png` — Emblema de la casa.
+  - `.github/workflows/deploy-pages.yml` — Compilación con Bun y despliegue en GitHub Pages.
+  - `docs/screenshots/` — Capturas reales de la aplicación.
   - `LICENSE` — Licencia MIT.
 
 ---
 
 ## Despliegue en GitHub Pages
 
-### Opción A: Despliegue automático con GitHub Actions (Recomendada)
-1. Sube este repositorio a GitHub en la rama `main`.
-2. Ve a **Settings → Pages → Build and deployment → Source** y selecciona **GitHub Actions**.
-3. El workflow incluido en [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) publicará automáticamente la aplicación en `https://<tu-usuario>.github.io/<tu-repositorio>/`.
-
-### Opción B: Despliegue directo desde la rama `main`
-1. Ve a **Settings → Pages → Build and deployment → Source** y selecciona **Deploy from a branch**.
-2. Elige la rama `main` y la carpeta `/ (root)` y guarda los cambios.
-3. Gracias a `.nojekyll` y a las rutas relativas (`./assets/...`), la aplicación funcionará inmediatamente sin paso de compilación.
+El flujo [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) se ejecuta en cada `push` a `main`: instala con Bun (`bun install --frozen-lockfile`), compila `./dist` y lo publica en https://unfantasmaenelsistema.github.io/InventarioCMDB/ (en **Settings → Pages**, la fuente es **GitHub Actions**).
 
 ---
 
 ## Uso en Local
 
-Puedes abrir `index.html` mediante cualquier servidor HTTP estático:
+Requisitos: **[Bun](https://bun.sh/)** (el proyecto usa `bun.lock`).
 
 ```bash
-# Con Python 3
-python3 -m http.server 8080
-
-# O con Node.js / npx
-npx serve .
+git clone https://github.com/unfantasmaenelsistema/InventarioCMDB.git
+cd InventarioCMDB
+bun install
+bun run dev        # http://localhost:3000
+bun run build      # genera ./dist para publicar
 ```
 
-Y acceder a `http://localhost:8080` en tu navegador.
+Abrir `index.html` directamente ya no basta: los estilos de Tailwind se generan al compilar.
+
+---
+
+## Novedades de la versión 2
+
+- **Publicado en GitHub Pages.** El workflow fallaba porque Pages no estaba activado. Ahora compila con Bun y publica.
+- **Escenarios Base64 seguros.** Un escenario compartido con un nombre de host o un reto manipulado ejecutaba código en el navegador de quien lo importaba: muchos campos se pintaban con `innerHTML` sin escapar, aunque el README decía lo contrario. Ahora se escapan todos y los identificadores se validan. Los retos importados tampoco llegan ya como resueltos.
+- **CSV sin inyección de fórmulas**: un responsable con `=HYPERLINK(...)` llegaba tal cual a Excel.
+- **Tailwind compilado** y **D3 con versión fija** (`d3@7` podía cambiar sin aviso).
+- **Limpieza**: fuera el esqueleto de React sin uso, los restos de AI Studio y el logo duplicado.
 
 ---
 
