@@ -1,0 +1,6 @@
+{
+  "name": "InventarioCMDB",
+  "description": "Simulador educativo de escaneo de redes, gestión de inventario CMDB y auditoría de vulnerabilidades SBOM/CVE 100% en el cliente.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
