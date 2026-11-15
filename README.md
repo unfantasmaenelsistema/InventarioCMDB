@@ -10,7 +10,7 @@
 
 [![100% Client-Side](https://img.shields.io/badge/Arquitectura-100%25%20Client--Side-0EA5E9?style=flat-square)](#arquitectura-y-tecnolog%C3%ADas)
 [![Vanilla JS ES6](https://img.shields.io/badge/JavaScript-Vanilla%20ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=000)](#arquitectura-y-tecnolog%C3%ADas)
-[![D3.js v7](https://img.shields.io/badge/Visualizaci%C3%B3n-D3.js%20v7-F9A03C?style=flat-square&logo=d3.js&logoColor=fff)](#panel-principal-dashboard-soc-y-visualizaci%C3%B3n-d3js)
+[![D3.js v7](https://img.shields.io/badge/Visualizaci%C3%B3n-D3.js%207.9-F9A03C?style=flat-square&logo=d3.js&logoColor=fff)](#arquitectura-y-tecnolog%C3%ADas)
 [![CycloneDX 1.5](https://img.shields.io/badge/SBOM-CycloneDX%201.5-10B981?style=flat-square)](#exportaci%C3%B3n-profesional-y-portabilidad)
 [![Probar en GitHub Pages](https://img.shields.io/badge/Probar-en%20el%20navegador-22C55E?style=flat-square&logo=github)](https://unfantasmaenelsistema.github.io/InventarioCMDB/)
 [![License: MIT](https://img.shields.io/badge/Licencia-MIT-slate?style=flat-square)](./LICENSE)
