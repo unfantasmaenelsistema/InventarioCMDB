@@ -14,9 +14,9 @@
       content="Simulador educativo de escaneo de redes, gestión de inventario CMDB y auditoría de vulnerabilidades SBOM/CVE 100% en el cliente."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./assets/aistudio/icono_81a3db5b.png" />
+    <meta property="og:image" content="./assets/logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/png" href="./assets/aistudio/icono_81a3db5b.png" />
+    <link rel="icon" type="image/png" href="./assets/logo.png" />
 
     <!-- Tipografía corporativa y monoespaciada tabular -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,31 +26,8 @@
       rel="stylesheet"
     />
 
-    <!-- Tailwind CSS y D3.js v7 vía CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-              mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
-            },
-            colors: {
-              soc: {
-                canvas: '#0B1120',
-                surface: '#111827',
-                elevated: '#162032',
-                border: '#1E293B',
-                accent: '#0EA5E9',
-              },
-            },
-          },
-        },
-      };
-    </script>
+    <!-- D3.js con versión fija (antes d3@7, que cambia sin avisar) -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
     <style>
       html {
@@ -74,6 +51,9 @@
         }
       }
     </style>
+
+    <!-- Tailwind CSS compilado en el build (antes: CDN de desarrollo, que avisa de no usarse en producción) -->
+    <link rel="stylesheet" href="/src/styles.css" />
   </head>
 
   <body class="min-h-screen bg-soc-canvas text-slate-200 antialiased selection:bg-sky-500/30 selection:text-sky-100">
@@ -102,7 +82,7 @@
             title="Visitar Un Fantasma en el Sistema"
           >
             <img
-              src="./assets/aistudio/icono_81a3db5b.png"
+              src="./assets/logo.png"
               alt="Logo de Un Fantasma en el Sistema"
               class="h-full w-full object-contain"
               referrerpolicy="no-referrer"
@@ -242,7 +222,7 @@
             class="group flex items-center gap-3 rounded-lg border border-slate-800 bg-soc-canvas/70 px-3 py-2.5 transition-colors hover:border-slate-700 hover:bg-soc-elevated focus-visible:outline-2 focus-visible:outline-sky-400"
           >
             <img
-              src="./assets/aistudio/icono_81a3db5b.png"
+              src="./assets/logo.png"
               alt="Un Fantasma en el Sistema"
               class="h-7 w-7 shrink-0 rounded bg-white object-contain p-0.5"
               referrerpolicy="no-referrer"
@@ -392,7 +372,7 @@
                       title="Un Fantasma en el Sistema"
                     >
                       <img
-                        src="./assets/aistudio/icono_81a3db5b.png"
+                        src="./assets/logo.png"
                         alt="Emblema de Un Fantasma en el Sistema"
                         class="h-full w-full object-contain"
                         referrerpolicy="no-referrer"
@@ -2172,6 +2152,36 @@
       // Exponer globalmente para consola / futuras fases
       window.cmdbState = cmdbState;
 
+      // Los retos (textos y banderas) son parte del laboratorio, no del escenario: al importar o
+      // restaurar se usan estas definiciones y el progreso se vuelve a evaluar sobre la red.
+      const CTF_DEFINITIONS = JSON.parse(JSON.stringify(cmdbState.ctfChallenges));
+
+      /**
+       * Lo que llega de fuera (cadena Base64 o localStorage) se valida así:
+       * - los textos se escapan al pintarlos (escapeHtml), sin tocar los datos;
+       * - los identificadores, que van dentro de onclick="...('id')", solo admiten [A-Za-z0-9._:-];
+       * - se ignoran claves que podrían contaminar prototipos.
+       * Antes un escenario compartido podía ejecutar código en el navegador de quien lo importaba.
+       */
+      const ID_KEYS = new Set(['id', 'assetId', 'sourceId', 'targetId', 'selectedCiId']);
+      function sanitizeImportedState(node, key) {
+        if (typeof node === 'string') return ID_KEYS.has(key) ? node.replace(/[^A-Za-z0-9._:-]/g, '') : node;
+        if (Array.isArray(node)) return node.map((v) => sanitizeImportedState(v, key));
+        if (node && typeof node === 'object') {
+          const out = {};
+          for (const k of Object.keys(node)) {
+            if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+            out[k] = sanitizeImportedState(node[k], k);
+          }
+          return out;
+        }
+        return node;
+      }
+
+      function resetChallengesFromDefinitions() {
+        cmdbState.ctfChallenges = JSON.parse(JSON.stringify(CTF_DEFINITIONS));
+      }
+
       const DIFFICULTY_STORAGE_KEY = 'inventarioCmdb_difficulty';
 
       function clonePlainData(data) {
@@ -2665,7 +2675,7 @@
         try {
           const raw = localStorage.getItem(STATE_STORAGE_KEY);
           if (!raw) return false;
-          const parsed = JSON.parse(raw);
+          const parsed = sanitizeImportedState(JSON.parse(raw));
           if (
             !parsed ||
             !Array.isArray(parsed.networkAssets) ||
@@ -2678,7 +2688,6 @@
           cmdbState.sbomDatabase = parsed.sbomDatabase;
           cmdbState.cveDatabase = parsed.cveDatabase;
           if (Array.isArray(parsed.ciRelationships)) cmdbState.ciRelationships = parsed.ciRelationships;
-          if (Array.isArray(parsed.ctfChallenges)) cmdbState.ctfChallenges = parsed.ctfChallenges;
           cmdbState.triagedFindings = parsed.triagedFindings || {};
           cmdbState.inspectedAssets = parsed.inspectedAssets || {};
           cmdbState.riskHistory = Array.isArray(parsed.riskHistory) ? parsed.riskHistory : [];
@@ -2690,6 +2699,8 @@
           cmdbState.cveSubnetFilter = parsed.cveSubnetFilter || 'ALL';
           cmdbState.hideExcludedCves = Boolean(parsed.hideExcludedCves);
           cmdbState.cmdbViewMode = parsed.cmdbViewMode || 'table';
+          resetChallengesFromDefinitions();
+          evaluateCtfChallenges();
           return true;
         } catch (_err) {
           return false;
@@ -2722,7 +2733,13 @@
       function exportCmdbCsv() {
         const approved = cmdbState.networkAssets.filter((a) => a.status === 'cmdb');
         const headers = ['ID', 'Hostname', 'IP', 'MAC', 'Subred', 'Tipo', 'SO', 'Criticidad', 'Responsable', 'Estado', 'Puertos'];
-        const csvCell = (val) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+        // Una celda que empieza por = + - @ (o tabulador/retorno) la ejecuta Excel como fórmula: se
+        // antepone un apóstrofo para que se lea como texto (inyección CSV)
+        const csvCell = (val) => {
+          let text = String(val ?? '');
+          if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+          return `"${text.replace(/"/g, '""')}"`;
+        };
         const rows = approved.map((a) =>
           [
             a.id,
@@ -3153,7 +3170,7 @@
           if (asset.isHoneypot) {
             statusText.textContent = `ALERTA: Honeypot / Firewall restrictivo detectado en ${asset.ip}`;
             appendTerminalLine(
-              `<span class="text-rose-400 font-semibold">[ALERTA IDS / BLOQUEO IPS]</span> Sondeo SYN sobre <span class="text-rose-300">${asset.ip} (${asset.hostname})</span> disparó trampa Honeypot.`
+              `<span class="text-rose-400 font-semibold">[ALERTA IDS / BLOQUEO IPS]</span> Sondeo SYN sobre <span class="text-rose-300">${escapeHtml(asset.ip)} (${escapeHtml(asset.hostname)})</span> disparó trampa Honeypot.`
             );
             appendTerminalLine(
               `<span class="text-rose-400">[FIREWALL DROP]</span> Conexión reiniciada (RST/DROP). IP del escáner bloqueada temporalmente; escaneo activo abortado.`
@@ -3171,7 +3188,7 @@
           if (!asset.respondsToActive) {
             statusText.textContent = `Sondeando ${asset.ip} — Sin respuesta ICMP/TCP`;
             appendTerminalLine(
-              `<span class="text-slate-500">[NMAP]</span> ${asset.ip} -> <span class="text-slate-400">Host seems down / packets filtered (sin respuesta a ping ni SYN)</span>`
+              `<span class="text-slate-500">[NMAP]</span> ${escapeHtml(asset.ip)} -> <span class="text-slate-400">Host seems down / packets filtered (sin respuesta a ping ni SYN)</span>`
             );
             index += 1;
             return;
@@ -3180,10 +3197,10 @@
           // Caso 3: El host responde al escaneo activo -> enumeración progresiva de puertos y servicios
           statusText.textContent = `Enumerando puertos y banners en ${asset.ip} (${asset.hostname})...`;
           appendTerminalLine(
-            `<span class="text-sky-300">[HOST UP]</span> ${asset.ip} (${asset.hostname}) · SO estimado: ${asset.os}`
+            `<span class="text-sky-300">[HOST UP]</span> ${escapeHtml(asset.ip)} (${escapeHtml(asset.hostname)}) · SO estimado: ${escapeHtml(asset.os)}`
           );
           asset.serviceBanners.forEach((banner) => {
-            appendTerminalLine(`<span class="pl-4 text-slate-300">├─ ${banner}</span>`);
+            appendTerminalLine(`<span class="pl-4 text-slate-300">├─ ${escapeHtml(banner)}</span>`);
           });
 
           if (asset.status === 'hidden') {
@@ -3270,7 +3287,7 @@
           statusText.textContent = `Capturando broadcast ${asset.broadcastProtocol} desde ${asset.mac}...`;
 
           appendTerminalLine(
-            `<span class="text-emerald-300">[BROADCAST ${asset.broadcastProtocol}]</span> MAC ${asset.mac} -> IP ${asset.ip} (${asset.hostname}) · ${asset.type}`
+            `<span class="text-emerald-300">[BROADCAST ${escapeHtml(asset.broadcastProtocol)}]</span> MAC ${escapeHtml(asset.mac)} -> IP ${escapeHtml(asset.ip)} (${escapeHtml(asset.hostname)}) · ${escapeHtml(asset.type)}`
           );
 
           if (asset.status === 'hidden') {
@@ -3517,13 +3534,13 @@
             return `
               <tr class="transition-colors hover:bg-slate-800/40">
                 <td class="px-4 py-3">
-                  <div class="font-medium text-slate-100">${asset.hostname}</div>
-                  <div class="font-mono text-[11px] text-slate-400">${asset.mac} · ${asset.os}</div>
+                  <div class="font-medium text-slate-100">${escapeHtml(asset.hostname)}</div>
+                  <div class="font-mono text-[11px] text-slate-400">${escapeHtml(asset.mac)} · ${escapeHtml(asset.os)}</div>
                 </td>
-                <td class="px-4 py-3 font-mono text-slate-200 tabular-nums">${asset.ip}</td>
+                <td class="px-4 py-3 font-mono text-slate-200 tabular-nums">${escapeHtml(asset.ip)}</td>
                 <td class="px-4 py-3">
-                  <div class="${typeBadgeClass}">${asset.type}</div>
-                  <div class="text-[11px] text-slate-400">Criticidad: ${asset.criticality}</div>
+                  <div class="${typeBadgeClass}">${escapeHtml(asset.type)}</div>
+                  <div class="text-[11px] text-slate-400">Criticidad: ${escapeHtml(asset.criticality)}</div>
                 </td>
                 <td class="px-4 py-3">
                   <div class="text-slate-200">${asset.discoveredBy || 'Escáner'}</div>
@@ -3725,7 +3742,7 @@
                 tabindex="0"
                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCiDrawer('${asset.id}');}"
                 class="cursor-pointer transition-colors hover:bg-slate-800/60 focus-visible:bg-slate-800/60 focus-visible:outline-none"
-                title="Abrir ficha de CI para ${asset.hostname}"
+                title="Abrir ficha de CI para ${escapeHtml(asset.hostname)}"
               >
                 <td class="px-4 py-3">
                   <div class="font-medium text-sky-300 hover:underline">${escapeHtml(asset.hostname)}</div>
@@ -3982,14 +3999,14 @@
                   (c) => c.packageName === pkg.packageName && c.affectedVersion === pkg.version
                 );
                 const cveInfo = cve
-                  ? `<span class="font-mono text-rose-400 font-semibold">${cve.cveId} (CVSS ${cve.cvss.toFixed(1)})</span>`
+                  ? `<span class="font-mono text-rose-400 font-semibold">${escapeHtml(cve.cveId)} (CVSS ${cve.cvss.toFixed(1)})</span>`
                   : '<span class="text-emerald-400">Sin CVE crítico conocido</span>';
 
                 return `
                   <div class="flex items-center justify-between gap-3 border-b border-slate-800/80 px-4 py-3 last:border-b-0 text-xs">
                     <div>
-                      <p class="font-medium text-slate-100">${pkg.packageName} <span class="font-mono text-sky-300">${pkg.version}</span></p>
-                      <p class="text-[11px] text-slate-400">${pkg.ecosystem} · Licencia ${pkg.license}</p>
+                      <p class="font-medium text-slate-100">${escapeHtml(pkg.packageName)} <span class="font-mono text-sky-300">${escapeHtml(pkg.version)}</span></p>
+                      <p class="text-[11px] text-slate-400">${escapeHtml(pkg.ecosystem)} · Licencia ${escapeHtml(pkg.license)}</p>
                     </div>
                     <div class="text-right text-[11px]">${cveInfo}</div>
                   </div>
@@ -4421,7 +4438,7 @@
           }
           if (cellData.count === 0) {
             inspectorEl.innerHTML = `
-              <span class="font-mono text-slate-200">${cellData.subnet} · Severidad ${cellData.severity}</span>
+              <span class="font-mono text-slate-200">${escapeHtml(cellData.subnet)} · Severidad ${escapeHtml(cellData.severity)}</span>
               <span class="text-slate-400">0 vulnerabilidades activas registradas en este segmento (${cellData.subnetLabel}).</span>
             `;
             return;
@@ -4430,7 +4447,7 @@
             .slice(0, 4)
             .map(
               (m) =>
-                `<span class="font-mono text-slate-200">${m.cve.cveId}</span> <span class="text-slate-400">(${m.asset.hostname} · ${m.cve.cvss.toFixed(1)})</span>`
+                `<span class="font-mono text-slate-200">${escapeHtml(m.cve.cveId)}</span> <span class="text-slate-400">(${escapeHtml(m.asset.hostname)} · ${m.cve.cvss.toFixed(1)})</span>`
             )
             .join(' <span class="text-slate-600">·</span> ');
           const extraNote =
@@ -4439,7 +4456,7 @@
               : '';
           inspectorEl.innerHTML = `
             <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono font-semibold ${cellData.textClass}">${cellData.subnet} · ${cellData.severity} (${cellData.count})</span>
+              <span class="font-mono font-semibold ${cellData.textClass}">${escapeHtml(cellData.subnet)} · ${escapeHtml(cellData.severity)} (${cellData.count})</span>
               <span class="text-slate-500">—</span>
               <span>${detailsList}${extraNote}</span>
             </div>
@@ -4697,7 +4714,7 @@
                 <span class="font-mono font-semibold text-slate-100">Hito #${point.step}</span>
                 <span class="font-mono text-[11px] text-slate-400 tabular-nums">${point.timestamp}</span>
               </div>
-              <p class="mt-1.5 truncate font-medium text-sky-300">${point.label}</p>
+              <p class="mt-1.5 truncate font-medium text-sky-300">${escapeHtml(point.label)}</p>
               <div class="mt-2 space-y-1 text-[11px]">
                 <div class="flex items-center justify-between">
                   <span class="text-slate-400">Riesgo Global</span>
@@ -5065,7 +5082,7 @@
                 (step) => `
                 <li class="flex items-center gap-2 text-xs ${step.done ? 'text-emerald-400' : 'text-slate-400'}">
                   <span class="font-mono">${step.done ? '[OK]' : '[ ]'}</span>
-                  <span>${step.label}</span>
+                  <span>${escapeHtml(step.label)}</span>
                 </li>
               `
               )
@@ -5096,7 +5113,7 @@
               ? `
                 <div class="mt-4 rounded-lg border border-emerald-500/40 bg-emerald-950/40 px-4 py-3 text-xs">
                   <p class="font-semibold text-emerald-300">Bandera Capturada (Flag)</p>
-                  <p class="mt-1 font-mono text-emerald-200">${challenge.flag}</p>
+                  <p class="mt-1 font-mono text-emerald-200">${escapeHtml(challenge.flag)}</p>
                 </div>
               `
               : '';
@@ -5109,9 +5126,9 @@
                     ${challenge.solved ? 'Bandera Capturada (Flag)' : 'En progreso'}
                   </span>
                 </div>
-                <h3 class="mt-2 text-base font-semibold text-slate-100">${challenge.title}</h3>
-                <p class="mt-1.5 text-sm text-slate-300">${challenge.prompt}</p>
-                <p class="mt-2 text-xs text-slate-400">Pista: ${challenge.hint}</p>
+                <h3 class="mt-2 text-base font-semibold text-slate-100">${escapeHtml(challenge.title)}</h3>
+                <p class="mt-1.5 text-sm text-slate-300">${escapeHtml(challenge.prompt)}</p>
+                <p class="mt-2 text-xs text-slate-400">Pista: ${escapeHtml(challenge.hint)}</p>
 
                 <ul class="mt-4 space-y-1.5 rounded-lg border border-slate-800 bg-soc-canvas/70 p-3.5">
                   ${checklistHtml}
@@ -5247,7 +5264,7 @@
         }
 
         try {
-          const parsed = decodeBase64ToState(raw);
+          const parsed = sanitizeImportedState(decodeBase64ToState(raw));
           if (
             !parsed ||
             !Array.isArray(parsed.networkAssets) ||
@@ -5261,7 +5278,6 @@
           cmdbState.sbomDatabase = parsed.sbomDatabase;
           cmdbState.cveDatabase = parsed.cveDatabase;
           if (Array.isArray(parsed.ciRelationships)) cmdbState.ciRelationships = parsed.ciRelationships;
-          if (Array.isArray(parsed.ctfChallenges)) cmdbState.ctfChallenges = parsed.ctfChallenges;
           cmdbState.triagedFindings = parsed.triagedFindings || {};
           cmdbState.inspectedAssets = parsed.inspectedAssets || {};
           cmdbState.cveSeverityFilter = parsed.cveSeverityFilter || 'ALL';
@@ -5280,6 +5296,9 @@
           }
 
           cmdbState.auditLog = Array.isArray(parsed.auditLog) ? parsed.auditLog : [];
+          // El progreso de los retos no se importa: se recalcula sobre la red restaurada
+          resetChallengesFromDefinitions();
+          evaluateCtfChallenges();
           addAuditEvent('IMPORT', `Escenario restaurado desde Base64 (${cmdbState.networkAssets.length} activos)`, 'info');
 
           const hideToggle = document.getElementById('sbom-hide-excluded-toggle');
