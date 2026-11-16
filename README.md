@@ -215,6 +215,7 @@ Abrir `index.html` directamente ya no basta: los estilos de Tailwind se generan 
 
 - **Publicado en GitHub Pages.** El workflow fallaba porque Pages no estaba activado. Ahora compila con Bun y publica.
 - **Escenarios Base64 seguros.** Un escenario compartido con un nombre de host o un reto manipulado ejecutaba código en el navegador de quien lo importaba: muchos campos se pintaban con `innerHTML` sin escapar, aunque el README decía lo contrario. Ahora se escapan todos y los identificadores se validan. Los retos importados tampoco llegan ya como resueltos.
+- **Componentes SBOM y purl correctos.** El indicador *Componentes SBOM* contaba también los paquetes de equipos aún sin descubrir (10 desde el principio); ahora cuenta solo los de la CMDB. En el CycloneDX, el `purl` de Log4j salía como `…/log4j@2.14` y cualquier paquete Maven recibía el grupo de Log4j; ahora es `pkg:maven/org.apache.logging.log4j/log4j-core@2.14` y el grupo sale del propio paquete.
 - **CSV sin inyección de fórmulas**: un responsable con `=HYPERLINK(...)` llegaba tal cual a Excel.
 - **Tailwind compilado** y **D3 con versión fija** (`d3@7` podía cambiar sin aviso).
 - **Limpieza**: fuera el esqueleto de React sin uso, los restos de AI Studio y el logo duplicado.
