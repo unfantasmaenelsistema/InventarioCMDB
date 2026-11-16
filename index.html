@@ -2767,7 +2767,22 @@
         const name = encodeURIComponent(String(pkg.packageName || 'pkg').toLowerCase().replace(/\s+/g, '-'));
         const ver = encodeURIComponent(String(pkg.version || '0.0.0'));
         const eco = String(pkg.ecosystem || '').toLowerCase();
-        if (eco.includes('maven')) return `pkg:maven/org.apache.logging.log4j/${name}@${ver}`;
+        if (eco.includes('maven')) {
+          // purl Maven = pkg:maven/<groupId>/<artifactId>@<versión>. El artifactId sale del artefacto
+          // del SBOM (log4j-core-2.14 → log4j-core); el groupId, del propio paquete o de los conocidos.
+          const rawVersion = String(pkg.version || '');
+          const artifact = String(pkg.sbomArtifact || '');
+          const artifactId =
+            rawVersion && artifact.endsWith(`-${rawVersion}`)
+              ? artifact.slice(0, -(rawVersion.length + 1))
+              : String(pkg.packageName || 'pkg').toLowerCase().replace(/\s+/g, '-');
+          const knownGroups = { 'log4j-core': 'org.apache.logging.log4j', 'log4j-api': 'org.apache.logging.log4j' };
+          const groupId = pkg.groupId || knownGroups[artifactId.toLowerCase()] || '';
+          const encArtifact = encodeURIComponent(artifactId.toLowerCase());
+          return groupId
+            ? `pkg:maven/${encodeURIComponent(groupId)}/${encArtifact}@${ver}`
+            : `pkg:maven/${encArtifact}@${ver}`;
+        }
         if (eco.includes('pypi')) return `pkg:pypi/${name}@${ver}`;
         if (eco.includes('deb')) return `pkg:deb/debian/${name}@${ver}`;
         return `pkg:generic/${name}@${ver}`;
@@ -5733,7 +5748,11 @@
         const discoveredCount = legitimateAssets.filter((a) => a.status === 'cmdb').length;
         const pendingCount = cmdbState.networkAssets.filter((a) => a.status === 'pending').length;
         const hiddenCount = legitimateAssets.filter((a) => a.status === 'hidden').length;
-        const sbomCount = cmdbState.sbomDatabase.length;
+        // Solo los paquetes de activos consolidados: los equipos aún sin descubrir no están «inventariados»
+        const cmdbAssetIds = new Set(
+          cmdbState.networkAssets.filter((a) => a.status === 'cmdb').map((a) => a.id)
+        );
+        const sbomCount = cmdbState.sbomDatabase.filter((p) => cmdbAssetIds.has(p.assetId)).length;
 
         const auditFindings = runSbomCveAudit();
         const risk = calculateGlobalRisk(auditFindings);
